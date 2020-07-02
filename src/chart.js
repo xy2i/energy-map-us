@@ -319,6 +319,7 @@ function chart(data) {
         (enter) =>
           enter
             .append('path')
+            .attr('fill', 'white')
             .call((enter) =>
               enter
                 .transition(t)
