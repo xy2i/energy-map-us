@@ -19,7 +19,7 @@ svg #circles circle:hover {
 /* Control buttons */
 .control-drawer {
   border: 1px solid lightgray;
-  border-radius: 4px;
+  border-radius: 4px 4px 0px 0px;
   margin: 0.5rem;
   font-size: 0.75rem;
 }
