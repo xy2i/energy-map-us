@@ -364,6 +364,19 @@ function chart(data) {
 
 // Controls the chart closure and makes buttons.
 function control(chart) {
+  // From an energy type, determine which source to highlight.
+  const energyTypeToHighlight = new Map([
+    ['coal', 'source_fossil'],
+    ['natural_gaz', 'source_fossil'],
+    ['oil', 'source_fossil'],
+    ['hydro', 'source_renewable'],
+    ['geothermic', 'source_renewable'],
+    ['solar', 'source_renewable'],
+    ['wind', 'source_renewable'],
+    ['biomass_other', 'source_renewable'],
+    ['nuclear', 'source_nuclear'],
+  ])
+
   const energyTypes = [
     {
       energyType: 'nuclear',
@@ -486,28 +499,7 @@ function control(chart) {
 
   const typesDiv = d3.select('.energy-type')
 
-  typesDiv
-    .selectAll('.btn')
-    .data(energyTypes)
-    // Need to use function() form explicity to keep this's scope.
-    .on('click', function ({ energyType, name, colorScale, title }) {
-      const button = d3.select(this)
-      typesDiv.selectAll('button').classed('btn-active', false)
-      button.classed('btn-active', true)
-
-      chart
-        .energyType(energyType)
-        .energyName(name)
-        .colorScale(colorScale)
-        .fontColor(color)
-        .legendTitle(title)()
-    })
-
-  typesDiv
-    .selectAll('.btn-text')
-    .data(energyTypes)
-    .text((d) => d.name)
-
+  // Sources div
   const energySources = [
     {
       energyType: 'source_fossil',
@@ -526,7 +518,7 @@ function control(chart) {
       colorScale: d3
         .scaleLinear()
         .domain([1, 100])
-        .range(['#EAF3FD', '#3B8AD8']),
+        .range(['#E6FDE7', '#0FD81E']),
       title: 'Share of renewable sources',
     },
     {
@@ -542,6 +534,16 @@ function control(chart) {
   ]
   const sourcesDiv = d3.select('.energy-sources')
 
+  /* Creation and onclick */
+  typesDiv
+    .selectAll('.btn')
+    .data(energyTypes)
+    // Need to use function() form explicity to keep this's scope.
+    // Need to use function() form explicity to keep this's scope.
+    .on('click', function (d) {
+      updateTypes(this, d)
+    })
+
   sourcesDiv
     .selectAll('button')
     .data(energySources)
@@ -550,18 +552,67 @@ function control(chart) {
     .attr('class', 'btn')
     .style('color', (d) => d.color)
     // Need to use function() form explicity to keep this's scope.
-    .on('click', function ({ energyType, name, colorScale, title }) {
-      const button = d3.select(this)
-      sourcesDiv.selectAll('button').classed('btn-active', false)
-      button.classed('btn-active', true)
-
-      chart
-        .energyType(energyType)
-        .energyName(name)
-        .colorScale(colorScale)
-        .fontColor(color)
-        .legendTitle(title)()
+    .on('click', function (d) {
+      updateSources(this, d)
     })
+
+  typesDiv
+    .selectAll('.btn-text')
+    .data(energyTypes)
+    .text((d) => d.name)
+
+  sourcesDiv
+    .selectAll('.btn-text')
+    .data(energySources)
+    .text((d) => d.name)
+
+  function updateTypes(selection, { energyType, name, colorScale, title }) {
+    console.log(selection)
+    const button = d3.select(selection)
+
+    typesDiv.selectAll('button').classed('btn-active', false)
+    button.classed('btn-active', true)
+
+    // Set the corresponding energy source as highlighted.
+    const highlightedSource = energyTypeToHighlight.get(energyType)
+    sourcesDiv.selectAll('button').classed('btn-highlight', false)
+    sourcesDiv.selectAll('button').classed('btn-active', false)
+    sourcesDiv
+      .selectAll('button')
+      .data(energySources)
+      // Does the matching energy source have the same source as the highlighted?
+      .classed('btn-highlight', (d) => d.energyType === highlightedSource)
+
+    // Call the closure, updating the chart.
+    chart
+      .energyType(energyType)
+      .energyName(name)
+      .colorScale(colorScale)
+      .legendTitle(title)()
+  }
+
+  function updateSources(selection, { energyType, name, colorScale, title }) {
+    console.log(selection)
+    const button = d3.select(selection)
+
+    typesDiv.selectAll('button').classed('btn-active', false)
+    sourcesDiv
+      .selectAll('button')
+      .classed('btn-active', false)
+      .classed('btn-highlight', false)
+    button.classed('btn-active', true)
+
+    // Call the closure, updating the chart.
+    chart
+      .energyType(energyType)
+      .energyName(name)
+      .colorScale(colorScale)
+      .legendTitle(title)()
+  }
+
+  // Initialize.sourcesDiv=
+  updateTypes(typesDiv.selectAll('button')._groups[0][0], energyTypes[0])
+  //updateSources(energySources[0])
 }
 
 // Load all the data before continuing.

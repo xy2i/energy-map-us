@@ -1,6 +1,9 @@
 * {
   box-sizing: border-box;
 }
+body {
+  font-family: Roboto, sans-serif;
+}
 
 .container {
   max-width: 800px;
@@ -21,9 +24,11 @@ svg #circles circle:hover {
 }
 
 /* Control buttons */
-.control-drawer {
+.control {
   border: 1px solid lightgray;
   border-radius: 4px 4px 0px 0px;
+}
+.control-drawer {
   margin: 0.5rem;
   font-size: 0.75rem;
 }
@@ -54,7 +59,7 @@ svg #circles circle:hover {
 .btn {
   flex-basis: 8%;
   border: 1px solid white;
-  transition: background ease-in-out 0.3s;
+  transition: background ease-in-out 0.3s, border-color ease-in-out 0.3s;
   margin: 0.5rem 0.175rem;
   border-radius: 4px;
   background: none;
@@ -84,6 +89,12 @@ svg #circles circle:hover {
 }
 .btn-active:hover {
   background: #ddd;
+}
+.btn-highlight {
+  background: white;
+  border: 1px solid lightgray;
+  transition: background ease-in-out 0.3s, border-color ease-in-out 0.3s;
+  /* border: 1px solid lightgray; */
 }
 .btn-text {
   font-weight: bold;
