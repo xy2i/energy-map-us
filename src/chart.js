@@ -261,11 +261,10 @@ function chart(data) {
   // Transition.
   const t = d3.transition().duration(500).ease(d3.easeExp)
 
-  // Render once:
   /* Map creation */
   svg
     .append('g')
-    .attr('fill', '#666')
+    .attr('fill', '#ddd')
     .attr('id', 'map')
     .selectAll('path')
     .data(topojson.feature(data, data.objects.states).features)
@@ -278,10 +277,29 @@ function chart(data) {
     .append('path')
     .datum(topojson.mesh(data, data.objects.states, (a, b) => a !== b))
     .attr('fill', 'none')
-    .attr('stroke', '#666')
-    .attr('stroke-width', 0)
+    .attr('id', 'map-strokes')
+    .attr('stroke', 'white')
+    .attr('stroke-width', 1.5)
     .attr('stroke-linejoin', 'round')
     .attr('d', path)
+
+  svg
+    .append('g')
+    .attr('id', 'map-state-names')
+    .selectAll('text')
+    .data(topojson.feature(data, data.objects.states).features)
+    .join((enter) =>
+      enter
+        .append('text')
+        .text((d) => d.properties.name)
+        .style('opacity', 0)
+        .attr('x', (d) => path.centroid(d)[0])
+        .attr('y', (d) => path.centroid(d)[1])
+        .attr('text-anchor', 'middle')
+        .attr('fill', 'black')
+        .attr('font-size', '8pt')
+        .call((enter) => enter.transition(t).style('opacity', 1))
+    )
 
   function my() {
     // Remove and re-append legend.
@@ -299,7 +317,7 @@ function chart(data) {
         legend({ color, title: legendTitle, width: 260, tickFormat: format })
       )
 
-    // Fill color & text
+    // Fill color & tex
     svg
       .selectAll('#color')
       .data([null])
@@ -327,6 +345,10 @@ function chart(data) {
       .attr('d', path)
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
+
+    // Make sure the strokes are on top.
+    svg.select('#map-strokes').raise()
+    svg.select('#map-state-names').raise()
   }
 
   my.energyType = function (value) {
@@ -450,7 +472,7 @@ function control(chart) {
       colorScale: d3
         .scaleLinear()
         .domain([0.5, 10])
-        .range(['#E6FAFB', '#12B7C5']),
+        .range(['#B3EEF4', '#12B7C5']),
       title: 'Share of electricity produced by geothermic-powered plants',
       get color() {
         return this.colorScale(10)
@@ -463,7 +485,7 @@ function control(chart) {
       colorScale: d3
         .scaleLinear()
         .domain([1, 20])
-        .range(['#F6FBD8', '#D7C944']),
+        .range(['#F5EEAC', '#D7C944']),
       title: 'Share of electricity produced by solar-powered plants',
       get color() {
         return this.colorScale(20)
@@ -489,7 +511,7 @@ function control(chart) {
       colorScale: d3
         .scaleLinear()
         .domain([1, 20])
-        .range(['#F5F8E8', '#8EAB28']),
+        .range(['#D4E3A1', '#8EAB28']),
       title: 'Share of electricity produced by biomass & other plants',
       get color() {
         return this.colorScale(20)
@@ -510,6 +532,9 @@ function control(chart) {
         .domain([1, 100])
         .range(['#FBF9F1', '#CFC17A']),
       title: 'Share of fossil fuel sources',
+      get color() {
+        return this.colorScale(100)
+      },
     },
     {
       energyType: 'source_renewable',
@@ -518,8 +543,11 @@ function control(chart) {
       colorScale: d3
         .scaleLinear()
         .domain([1, 100])
-        .range(['#E6FDE7', '#0FD81E']),
+        .range(['#BFECC4', '#0FA31E']),
       title: 'Share of renewable sources',
+      get color() {
+        return this.colorScale(100)
+      },
     },
     {
       energyType: 'source_nuclear',
@@ -530,6 +558,9 @@ function control(chart) {
         .domain([1, 100])
         .range(['#F7D0DF', '#cf4a9b']),
       title: 'Share of nuclear sources',
+      get color() {
+        return this.colorScale(100)
+      },
     },
   ]
   const sourcesDiv = d3.select('.energy-sources')
@@ -566,7 +597,10 @@ function control(chart) {
     .data(energySources)
     .text((d) => d.name)
 
-  function updateTypes(selection, { energyType, name, colorScale, title }) {
+  function updateTypes(
+    selection,
+    { energyType, name, colorScale, title, color }
+  ) {
     console.log(selection)
     const button = d3.select(selection)
 
@@ -587,11 +621,15 @@ function control(chart) {
     chart
       .energyType(energyType)
       .energyName(name)
+      .fontColor(color)
       .colorScale(colorScale)
       .legendTitle(title)()
   }
 
-  function updateSources(selection, { energyType, name, colorScale, title }) {
+  function updateSources(
+    selection,
+    { energyType, name, colorScale, title, color }
+  ) {
     console.log(selection)
     const button = d3.select(selection)
 
@@ -606,6 +644,7 @@ function control(chart) {
     chart
       .energyType(energyType)
       .energyName(name)
+      .fontColor(color)
       .colorScale(colorScale)
       .legendTitle(title)()
   }
