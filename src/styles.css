@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .container {
   max-width: 800px;
   margin-left: auto;
@@ -45,6 +49,44 @@ svg #circles circle:hover {
 .buttons {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+}
+.btn {
+  flex-basis: 8%;
+  border: 1px solid white;
+  transition: background ease-in-out 0.3s;
+  margin: 0.5rem 0.175rem;
+  border-radius: 4px;
+  background: none;
+
+  font-family: inherit;
+  font-size: 100%;
+  padding: 0.5em 0.25rem;
+  color: black;
+  background-color: white;
+  text-decoration: none;
+  display: inline-block;
+  line-height: normal;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+}
+.btn:hover {
+  background: #eee;
+  transition: background ease-in-out 0.3s;
+  /* border: 1px solid lightgray; */
+}
+.btn-active {
+  background: #ddd;
+  transition: background ease-in-out 0.3s;
+  /* border: 1px solid lightgray; */
+}
+.btn-active:hover {
+  background: #ddd;
+}
+.btn-text {
+  font-weight: bold;
 }
 .buttons .pure-button {
   flex-grow: 1;

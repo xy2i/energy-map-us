@@ -230,8 +230,12 @@ function transform([data, us]) {
  * data is a mix of the US map GeoJSON and the actual data.
  */
 function chart(data) {
-  console.info(data)
-  console.log(topojson.feature(data, data.objects.states).features)
+  // Configurable properties.
+  let energyType = 'nuclear'
+  let energyName = 'Nuclear'
+  let color = d3.scaleLinear().domain([1, 100]).range(['#F7D0DF', '#cf4a9b'])
+  let legendTitle = 'Share of electricity produced by nuclear-powered plants'
+  let fontColor = color(100)
 
   const tip = d3
     .tip()
@@ -240,11 +244,7 @@ function chart(data) {
     .html(
       (d, i) =>
         `<span class="tooltip-title">${d.properties.name}</span><br>
-        <span class="tooltip-value">${
-          d.properties.energyTypes[energyType]
-        }% <span class="tooltip-name" style="color:${color(
-          100
-        )}">${energyName}</span></span>
+        <span class="tooltip-value">${d.properties.energyTypes[energyType]}% <span class="tooltip-name" style="color:${fontColor}">${energyName}</span></span>
         </div>`
     )
 
@@ -260,12 +260,6 @@ function chart(data) {
 
   // Transition.
   const t = d3.transition().duration(500).ease(d3.easeExp)
-
-  // Configurable properties.
-  let energyType = 'nuclear'
-  let energyName = 'Nuclear'
-  let color = d3.scaleLinear().domain([1, 100]).range(['#F7D0DF', '#cf4a9b'])
-  let legendTitle = 'Share of electricity produced by nuclear-powered plants'
 
   // Render once:
   /* Map creation */
@@ -290,8 +284,6 @@ function chart(data) {
     .attr('d', path)
 
   function my() {
-    console.log('render called, colorscale:', color(1))
-
     // Remove and re-append legend.
     svg
       .select('.legend')
@@ -355,6 +347,12 @@ function chart(data) {
     return my
   }
 
+  my.fontColor = function (value) {
+    if (!arguments.length) return fontColor
+    fontColor = value
+    return my
+  }
+
   my.legendTitle = function (value) {
     if (!arguments.length) return legendTitle
     legendTitle = value
@@ -376,6 +374,9 @@ function control(chart) {
         .domain([1, 100])
         .range(['#F7D0DF', '#cf4a9b']),
       title: 'Share of electricity produced by nuclear-powered plants',
+      get color() {
+        return this.colorScale(100)
+      },
     },
     {
       energyType: 'coal',
@@ -386,16 +387,22 @@ function control(chart) {
         .domain([1, 100])
         .range(['#E7E6E7', '#99979A']),
       title: 'Share of electricity produced by coal-powered plants',
+      get color() {
+        return this.colorScale(100)
+      },
     },
     {
       energyType: 'natural_gaz',
-      name: 'Natural gaz',
+      name: 'Natural gas',
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
         .domain([1, 100])
         .range(['#FFF1C6', '#f78b29']),
-      title: 'Share of electricity produced by natural gaz-powered plants',
+      title: 'Share of electricity produced by natural gas-powered plants',
+      get color() {
+        return this.colorScale(100)
+      },
     },
     {
       energyType: 'oil',
@@ -403,9 +410,12 @@ function control(chart) {
       fontColor: 'white',
       colorScale: d3
         .scaleLinear()
-        .domain([1, 100])
+        .domain([1, 20])
         .range(['#FFCFC3', '#EE1C25']),
       title: 'Share of electricity produced by oil-powered plants',
+      get color() {
+        return this.colorScale(20)
+      },
     },
     {
       energyType: 'hydro',
@@ -413,9 +423,12 @@ function control(chart) {
       fontColor: 'white',
       colorScale: d3
         .scaleLinear()
-        .domain([1, 100])
+        .domain([1, 50])
         .range(['#C2D5F6', '#0081C5']),
       title: 'Share of electricity produced by hydro-powered plants',
+      get color() {
+        return this.colorScale(50)
+      },
     },
     {
       energyType: 'geothermic',
@@ -423,9 +436,12 @@ function control(chart) {
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
-        .domain([1, 100])
-        .range(['#DDF2FF', '#12DCFF']),
+        .domain([0.5, 10])
+        .range(['#E6FAFB', '#12B7C5']),
       title: 'Share of electricity produced by geothermic-powered plants',
+      get color() {
+        return this.colorScale(10)
+      },
     },
     {
       energyType: 'solar',
@@ -433,9 +449,12 @@ function control(chart) {
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
-        .domain([1, 100])
+        .domain([1, 20])
         .range(['#F6FBD8', '#D7C944']),
       title: 'Share of electricity produced by solar-powered plants',
+      get color() {
+        return this.colorScale(20)
+      },
     },
     {
       energyType: 'wind',
@@ -443,9 +462,12 @@ function control(chart) {
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
-        .domain([1, 100])
+        .domain([1, 50])
         .range(['#CFF4E5', '#0FB14C']),
       title: 'Share of electricity produced by wind-powered plants',
+      get color() {
+        return this.colorScale(50)
+      },
     },
     {
       energyType: 'biomass_other',
@@ -453,29 +475,38 @@ function control(chart) {
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
-        .domain([1, 100])
-        .range(['#FFF3E3', '#FFE2D6']),
+        .domain([1, 20])
+        .range(['#F5F8E8', '#8EAB28']),
       title: 'Share of electricity produced by biomass & other plants',
+      get color() {
+        return this.colorScale(20)
+      },
     },
   ]
+
   const typesDiv = d3.select('.energy-type')
 
   typesDiv
-    .selectAll('button')
+    .selectAll('.btn')
     .data(energyTypes)
-    .join('button')
-    .attr('type', 'button')
-    .attr('class', 'pure-button')
-    .style('background-color', (d) => d.colorScale(100))
-    .style('color', (d) => d.fontColor)
-    .text((d) => d.name)
-    .on('click', ({ energyType, name, colorScale, title }) => {
+    // Need to use function() form explicity to keep this's scope.
+    .on('click', function ({ energyType, name, colorScale, title }) {
+      const button = d3.select(this)
+      typesDiv.selectAll('button').classed('btn-active', false)
+      button.classed('btn-active', true)
+
       chart
         .energyType(energyType)
         .energyName(name)
         .colorScale(colorScale)
+        .fontColor(color)
         .legendTitle(title)()
     })
+
+  typesDiv
+    .selectAll('.btn-text')
+    .data(energyTypes)
+    .text((d) => d.name)
 
   const energySources = [
     {
@@ -516,15 +547,19 @@ function control(chart) {
     .data(energySources)
     .join('button')
     .attr('type', 'button')
-    .attr('class', 'pure-button')
-    .style('background-color', (d) => d.colorScale(100))
-    .style('color', (d) => d.fontColor)
-    .text((d) => d.name)
-    .on('click', ({ energyType, name, colorScale, title }) => {
+    .attr('class', 'btn')
+    .style('color', (d) => d.color)
+    // Need to use function() form explicity to keep this's scope.
+    .on('click', function ({ energyType, name, colorScale, title }) {
+      const button = d3.select(this)
+      sourcesDiv.selectAll('button').classed('btn-active', false)
+      button.classed('btn-active', true)
+
       chart
         .energyType(energyType)
         .energyName(name)
         .colorScale(colorScale)
+        .fontColor(color)
         .legendTitle(title)()
     })
 }
