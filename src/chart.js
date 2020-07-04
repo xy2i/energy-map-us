@@ -1,18 +1,6 @@
 /* Configuration */
 const selector = '.energy-map' // Where to put the chart (CSS selector)
 
-// Colors used.
-const colors = [
-  '#f78b29',
-  '#99979a',
-  '#cf4a9b',
-  '#0081c5',
-  '#ee1c25',
-  '#0fb14c',
-  '#d7c944',
-  '#ffefd6',
-]
-
 function createCanvas(width, height) {
   var canvas = document.createElement('canvas')
   canvas.width = width
@@ -207,9 +195,6 @@ function legend({
  * Transform them into one single dataset.
  */
 function transform([data, us]) {
-  console.log(topojson.feature(us, us.objects.states).features)
-  console.log('data', data)
-
   const states = topojson.feature(us, us.objects.states).features
   /*
    * Create a new property and append the energy types to it.
@@ -231,11 +216,65 @@ function transform([data, us]) {
  */
 function chart(data) {
   // Configurable properties.
-  let energyType = 'nuclear'
-  let energyName = 'Nuclear'
-  let color = d3.scaleLinear().domain([1, 100]).range(['#F7D0DF', '#cf4a9b'])
-  let legendTitle = 'Share of electricity produced by nuclear-powered plants'
-  let fontColor = color(100)
+  let energyType = ''
+  let energyName = ''
+  let color = () => {}
+  let legendTitle = ''
+  let fontColor = () => {}
+
+  const nameToShortname = new Map([
+    ['Alabama', 'Ala.'],
+    ['Alaska', 'Alaska'],
+    ['Arizona', 'Ariz'],
+    ['Arkansas', 'Ark.'],
+    ['California', 'Calif.'],
+    ['Colorado', 'Colo.'],
+    ['Connecticut', 'Conn.'],
+    ['Delaware', 'Del.'],
+    ['District of Columbia', ''],
+    ['Florida', 'Fla.'],
+    ['Georgia', 'Ga.'],
+    ['Hawaii', 'Hawaii'],
+    ['Idaho', 'Idaho'],
+    ['Illinois', 'Ill.'],
+    ['Indiana', 'Ind.'],
+    ['Iowa', 'Iowa'],
+    ['Kansas', 'Kan.'],
+    ['Kentucky', 'Ky.'],
+    ['Louisiana', 'La.'],
+    ['Maine', 'Maine'],
+    ['Maryland', 'Md.'],
+    ['Massachusetts', 'Mass.'],
+    ['Michigan', 'Mich.'],
+    ['Minnesota', 'Minn.'],
+    ['Mississippi', 'Miss.'],
+    ['Missouri', 'Mo.'],
+    ['Montana', 'Mont.'],
+    ['Nebraska', 'Neb.'],
+    ['Nevada', 'Nev.'],
+    ['New Hampshire', 'N.H.'],
+    ['New Jersey', 'N.J.'],
+    ['New Mexico', 'N.M'],
+    ['New York', 'N.Y'],
+    ['North Carolina', 'N.C'],
+    ['North Dakota', 'N.D'],
+    ['Ohio', 'Ohio'],
+    ['Oklahoma', 'Okla.'],
+    ['Oregon', 'Ore.'],
+    ['Pennsylvania', 'Pa.'],
+    ['Rhode Island', 'R.I.'],
+    ['South Carolina', 'S.C.'],
+    ['South Dakota', 'S.D.'],
+    ['Tennessee', 'Tenn.'],
+    ['Texas', 'Tex.'],
+    ['Utah', 'Utah'],
+    ['Vermont', 'Vt.'],
+    ['Virginia', 'Va.'],
+    ['Washington', 'Wash.'],
+    ['West', 'W.Va.'],
+    ['Wisconsin', 'Wis.'],
+    ['Wyoming', 'Wyo.'],
+  ])
 
   const tip = d3
     .tip()
@@ -243,8 +282,12 @@ function chart(data) {
     // Display information
     .html(
       (d, i) =>
-        `<span class="tooltip-title">${d.properties.name}</span><br>
-        <span class="tooltip-value">${d.properties.energyTypes[energyType]}% <span class="tooltip-name" style="color:${fontColor}">${energyName}</span></span>
+        `<span class="tooltip-name" style="color:${fontColor}">${energyName}</span>-powered plants account for <br>
+        <span class="align">
+        <span class="tooltip-value">${d.properties.energyTypes[energyType]}%</span>  
+          &nbsp;of energy in&nbsp;
+          <span class="tooltip-title">${d.properties.name}</span>.
+        </span>
         </div>`
     )
 
@@ -283,6 +326,7 @@ function chart(data) {
     .attr('stroke-linejoin', 'round')
     .attr('d', path)
 
+  // States names
   svg
     .append('g')
     .attr('id', 'map-state-names')
@@ -291,13 +335,18 @@ function chart(data) {
     .join((enter) =>
       enter
         .append('text')
-        .text((d) => d.properties.name)
+        .text((d) => nameToShortname.get(d.properties.name))
         .style('opacity', 0)
         .attr('x', (d) => path.centroid(d)[0])
         .attr('y', (d) => path.centroid(d)[1])
         .attr('text-anchor', 'middle')
         .attr('fill', 'black')
-        .attr('font-size', '8pt')
+        .attr('font-size', '11pt')
+        .style('pointer-events', 'none')
+        .style(
+          'text-shadow',
+          '1px 1px 0px rgba(255,255,255,0.7),-1px -1px 0px rgba(255,255,255,0.7),-1px 1px 0px rgba(255,255,255,0.7),1px -1px 0px rgba(255,255,255,0.7)'
+        )
         .call((enter) => enter.transition(t).style('opacity', 1))
     )
 
@@ -317,7 +366,7 @@ function chart(data) {
         legend({ color, title: legendTitle, width: 260, tickFormat: format })
       )
 
-    // Fill color & tex
+    // Fill color & text
     svg
       .selectAll('#color')
       .data([null])

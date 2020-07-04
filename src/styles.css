@@ -108,21 +108,26 @@ svg #circles circle:hover {
 
 /* Tooltip content */
 .tooltip-title {
+  font-weight: bold;
   font-size: 1rem;
-  font-weight: 500;
 }
 .tooltip-value {
+  font-weight: bold;
   font-size: 3rem;
 }
 .tooltip-name {
   font-size: 1rem;
+  font-weight: bold;
+}
+.align {
+  display: flex;
+  align-items: bottom;
 }
 
 /* Tooltip */
 .d3-tip {
   line-height: 1;
   font-family: Roboto;
-  font-weight: bold;
   padding: 12px;
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
