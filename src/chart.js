@@ -650,7 +650,6 @@ function control(chart) {
     selection,
     { energyType, name, colorScale, title, color }
   ) {
-    console.log(selection)
     const button = d3.select(selection)
 
     typesDiv.selectAll('button').classed('btn-active', false)
