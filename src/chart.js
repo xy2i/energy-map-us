@@ -477,7 +477,7 @@ function control(chart) {
     },
     {
       energyType: 'natural_gaz',
-      name: 'Natural gas',
+      name: 'Natural Gas',
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
@@ -555,7 +555,7 @@ function control(chart) {
     },
     {
       energyType: 'biomass_other',
-      name: 'Biomass & other',
+      name: 'Biomass & Other',
       fontColor: 'black',
       colorScale: d3
         .scaleLinear()
