@@ -459,7 +459,7 @@ function control(chart) {
         .range(['#F7D0DF', '#cf4a9b']),
       title: 'Share of electricity produced by nuclear-powered plants',
       get color() {
-        return this.colorScale(100)
+        return this.colorScale(50) // reduce intensity
       },
     },
     {
@@ -472,7 +472,7 @@ function control(chart) {
         .range(['#E7E6E7', '#99979A']),
       title: 'Share of electricity produced by coal-powered plants',
       get color() {
-        return this.colorScale(100)
+        return this.colorScale(50) // reduce intensity
       },
     },
     {
@@ -498,7 +498,7 @@ function control(chart) {
         .range(['#FFCFC3', '#EE1C25']),
       title: 'Share of electricity produced by oil-powered plants',
       get color() {
-        return this.colorScale(20)
+        return this.colorScale(10)
       },
     },
     {
@@ -511,7 +511,7 @@ function control(chart) {
         .range(['#C2D5F6', '#0081C5']),
       title: 'Share of electricity produced by hydro-powered plants',
       get color() {
-        return this.colorScale(50)
+        return this.colorScale(25)
       },
     },
     {
@@ -550,7 +550,7 @@ function control(chart) {
         .range(['#CFF4E5', '#0FB14C']),
       title: 'Share of electricity produced by wind-powered plants',
       get color() {
-        return this.colorScale(50)
+        return this.colorScale(25) // reduce intensity
       },
     },
     {
@@ -563,7 +563,7 @@ function control(chart) {
         .range(['#D4E3A1', '#8EAB28']),
       title: 'Share of electricity produced by biomass & other plants',
       get color() {
-        return this.colorScale(20)
+        return this.colorScale(10)
       },
     },
   ]
@@ -572,6 +572,19 @@ function control(chart) {
 
   // Sources div
   const energySources = [
+    {
+      energyType: 'source_nuclear',
+      name: 'Nuclear',
+      fontColor: 'white',
+      colorScale: d3
+        .scaleLinear()
+        .domain([1, 100])
+        .range(['#F7D0DF', '#cf4a9b']),
+      title: 'Share of nuclear sources',
+      get color() {
+        return this.colorScale(50) // reduce intensity
+      },
+    },
     {
       energyType: 'source_fossil',
       name: 'Fossil',
@@ -595,20 +608,7 @@ function control(chart) {
         .range(['#BFECC4', '#0FA31E']),
       title: 'Share of renewable sources',
       get color() {
-        return this.colorScale(100)
-      },
-    },
-    {
-      energyType: 'source_nuclear',
-      name: 'Nuclear',
-      fontColor: 'white',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#F7D0DF', '#cf4a9b']),
-      title: 'Share of nuclear sources',
-      get color() {
-        return this.colorScale(100)
+        return this.colorScale(50) // reduce intensity
       },
     },
   ]

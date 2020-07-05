@@ -31,10 +31,10 @@ svg #circles circle:hover {
 }
 .control .logo {
   position: absolute;
-  height: 4rem;
-  opacity: 80%;
   bottom: 0;
   right: 0;
+  height: 3rem;
+  opacity: 80%;
 }
 .control-drawer {
   margin: 0.5rem;
@@ -137,7 +137,7 @@ svg #circles circle:hover {
   line-height: 1;
   font-family: Roboto;
   padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(76, 80, 88, 0.8);
   color: #fff;
   border-radius: 2px;
   pointer-events: none;
