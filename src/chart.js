@@ -1,7 +1,137 @@
 /*
- * Configuration
+ * Config data.
+ * These are used to configure the selector, but also to describe
+ * each different chart (what attribute to select, colors to use...)
  */
-const selector = '.energy-map' // Where to put the chart (CSS selector)
+
+const energyTypes = [
+  {
+    energyType: 'nuclear',
+    name: 'Nuclear',
+    fontColor: 'white',
+    colorScale: d3.scaleLinear().domain([1, 100]).range(['#F7D0DF', '#cf4a9b']),
+    title: 'Share of electricity produced by nuclear-powered plants',
+    get color() {
+      return this.colorScale(50) // reduce intensity
+    },
+  },
+  {
+    energyType: 'coal',
+    name: 'Coal',
+    fontColor: 'black',
+    colorScale: d3.scaleLinear().domain([1, 100]).range(['#E7E6E7', '#99979A']),
+    title: 'Share of electricity produced by coal-powered plants',
+    get color() {
+      return this.colorScale(50) // reduce intensity
+    },
+  },
+  {
+    energyType: 'natural_gaz',
+    name: 'Natural Gas',
+    fontColor: 'black',
+    colorScale: d3.scaleLinear().domain([1, 100]).range(['#FFF1C6', '#f78b29']),
+    title: 'Share of electricity produced by natural gas-powered plants',
+    get color() {
+      return this.colorScale(100)
+    },
+  },
+  {
+    energyType: 'oil',
+    name: 'Oil',
+    fontColor: 'white',
+    colorScale: d3.scaleLinear().domain([1, 20]).range(['#FFCFC3', '#EE1C25']),
+    title: 'Share of electricity produced by oil-powered plants',
+    get color() {
+      return this.colorScale(10)
+    },
+  },
+  {
+    energyType: 'hydro',
+    name: 'Hydro',
+    fontColor: 'white',
+    colorScale: d3.scaleLinear().domain([1, 50]).range(['#C2D5F6', '#0081C5']),
+    title: 'Share of electricity produced by hydro-powered plants',
+    get color() {
+      return this.colorScale(25)
+    },
+  },
+  {
+    energyType: 'geothermic',
+    name: 'Geothermic',
+    fontColor: 'black',
+    colorScale: d3
+      .scaleLinear()
+      .domain([0.5, 10])
+      .range(['#B3EEF4', '#12B7C5']),
+    title: 'Share of electricity produced by geothermic-powered plants',
+    get color() {
+      return this.colorScale(10)
+    },
+  },
+  {
+    energyType: 'solar',
+    name: 'Solar',
+    fontColor: 'black',
+    colorScale: d3.scaleLinear().domain([1, 20]).range(['#F5EEAC', '#D7C944']),
+    title: 'Share of electricity produced by solar-powered plants',
+    get color() {
+      return this.colorScale(20)
+    },
+  },
+  {
+    energyType: 'wind',
+    name: 'Wind',
+    fontColor: 'black',
+    colorScale: d3.scaleLinear().domain([1, 50]).range(['#CFF4E5', '#0FB14C']),
+    title: 'Share of electricity produced by wind-powered plants',
+    get color() {
+      return this.colorScale(25) // reduce intensity
+    },
+  },
+  {
+    energyType: 'biomass_other',
+    name: 'Biomass & Other',
+    fontColor: 'black',
+    colorScale: d3.scaleLinear().domain([1, 20]).range(['#D4E3A1', '#8EAB28']),
+    title: 'Share of electricity produced by biomass & other plants',
+    get color() {
+      return this.colorScale(10)
+    },
+  },
+]
+
+const energySources = [
+  {
+    energyType: 'source_nuclear',
+    name: 'Nuclear',
+    fontColor: 'white',
+    colorScale: d3.scaleLinear().domain([1, 100]).range(['#F7D0DF', '#cf4a9b']),
+    title: 'Share of nuclear sources',
+    get color() {
+      return this.colorScale(50) // reduce intensity
+    },
+  },
+  {
+    energyType: 'source_fossil',
+    name: 'Fossil',
+    fontColor: 'black',
+    colorScale: d3.scaleLinear().domain([1, 100]).range(['#FBF9F1', '#CFC17A']),
+    title: 'Share of fossil fuel sources',
+    get color() {
+      return this.colorScale(100)
+    },
+  },
+  {
+    energyType: 'source_renewable',
+    name: 'Renewable',
+    fontColor: 'white',
+    colorScale: d3.scaleLinear().domain([1, 100]).range(['#BFECC4', '#0FA31E']),
+    title: 'Share of renewable sources',
+    get color() {
+      return this.colorScale(50) // reduce intensity
+    },
+  },
+]
 
 /*
  * Library functions
@@ -220,10 +350,12 @@ function transform([data, us]) {
   return us
 }
 
-/*
- * data is a mix of the US map GeoJSON and the actual data.
+/**
+ * Returns a closure that, when called, renders the chart.
+ * @param {object} data The data.
+ * @param {string} selector Selector
  */
-function chart(data) {
+function chart(data, selector) {
   // Configurable properties.
   let energyType = ''
   let energyName = ''
@@ -442,7 +574,11 @@ function chart(data) {
   return my
 }
 
-// Controls the chart closure and makes buttons.
+/**
+ * Controls the chart by drawing a control drawer.
+ * @param {object} chart The chart closure.
+ * @param renderControl Whether to render the control panel.
+ */
 function control(chart) {
   // From an energy type, determine which source to highlight.
   const energyTypeToHighlight = new Map([
@@ -456,174 +592,13 @@ function control(chart) {
     ['biomass_other', 'source_renewable'],
     ['nuclear', 'source_nuclear'],
   ])
-
-  const energyTypes = [
-    {
-      energyType: 'nuclear',
-      name: 'Nuclear',
-      fontColor: 'white',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#F7D0DF', '#cf4a9b']),
-      title: 'Share of electricity produced by nuclear-powered plants',
-      get color() {
-        return this.colorScale(50) // reduce intensity
-      },
-    },
-    {
-      energyType: 'coal',
-      name: 'Coal',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#E7E6E7', '#99979A']),
-      title: 'Share of electricity produced by coal-powered plants',
-      get color() {
-        return this.colorScale(50) // reduce intensity
-      },
-    },
-    {
-      energyType: 'natural_gaz',
-      name: 'Natural Gas',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#FFF1C6', '#f78b29']),
-      title: 'Share of electricity produced by natural gas-powered plants',
-      get color() {
-        return this.colorScale(100)
-      },
-    },
-    {
-      energyType: 'oil',
-      name: 'Oil',
-      fontColor: 'white',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 20])
-        .range(['#FFCFC3', '#EE1C25']),
-      title: 'Share of electricity produced by oil-powered plants',
-      get color() {
-        return this.colorScale(10)
-      },
-    },
-    {
-      energyType: 'hydro',
-      name: 'Hydro',
-      fontColor: 'white',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 50])
-        .range(['#C2D5F6', '#0081C5']),
-      title: 'Share of electricity produced by hydro-powered plants',
-      get color() {
-        return this.colorScale(25)
-      },
-    },
-    {
-      energyType: 'geothermic',
-      name: 'Geothermic',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([0.5, 10])
-        .range(['#B3EEF4', '#12B7C5']),
-      title: 'Share of electricity produced by geothermic-powered plants',
-      get color() {
-        return this.colorScale(10)
-      },
-    },
-    {
-      energyType: 'solar',
-      name: 'Solar',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 20])
-        .range(['#F5EEAC', '#D7C944']),
-      title: 'Share of electricity produced by solar-powered plants',
-      get color() {
-        return this.colorScale(20)
-      },
-    },
-    {
-      energyType: 'wind',
-      name: 'Wind',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 50])
-        .range(['#CFF4E5', '#0FB14C']),
-      title: 'Share of electricity produced by wind-powered plants',
-      get color() {
-        return this.colorScale(25) // reduce intensity
-      },
-    },
-    {
-      energyType: 'biomass_other',
-      name: 'Biomass & Other',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 20])
-        .range(['#D4E3A1', '#8EAB28']),
-      title: 'Share of electricity produced by biomass & other plants',
-      get color() {
-        return this.colorScale(10)
-      },
-    },
-  ]
-
+  const sourcesDiv = d3.select('.energy-sources')
   const typesDiv = d3.select('.energy-type')
 
-  // Sources div
-  const energySources = [
-    {
-      energyType: 'source_nuclear',
-      name: 'Nuclear',
-      fontColor: 'white',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#F7D0DF', '#cf4a9b']),
-      title: 'Share of nuclear sources',
-      get color() {
-        return this.colorScale(50) // reduce intensity
-      },
-    },
-    {
-      energyType: 'source_fossil',
-      name: 'Fossil',
-      fontColor: 'black',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#FBF9F1', '#CFC17A']),
-      title: 'Share of fossil fuel sources',
-      get color() {
-        return this.colorScale(100)
-      },
-    },
-    {
-      energyType: 'source_renewable',
-      name: 'Renewable',
-      fontColor: 'white',
-      colorScale: d3
-        .scaleLinear()
-        .domain([1, 100])
-        .range(['#BFECC4', '#0FA31E']),
-      title: 'Share of renewable sources',
-      get color() {
-        return this.colorScale(50) // reduce intensity
-      },
-    },
-  ]
-  const sourcesDiv = d3.select('.energy-sources')
+  /*
+   * Rendering
+   */
 
-  /* Creation and onclick */
   typesDiv
     .selectAll('.btn')
     .data(energyTypes)
@@ -655,17 +630,14 @@ function control(chart) {
     .data(energySources)
     .text((d) => d.name)
 
-  function updateTypes(
-    selection,
-    { energyType, name, colorScale, title, color }
-  ) {
+  function updateTypes(selection, data) {
     const button = d3.select(selection)
 
     typesDiv.selectAll('button').classed('btn-active', false)
     button.classed('btn-active', true)
 
     // Set the corresponding energy source as highlighted.
-    const highlightedSource = energyTypeToHighlight.get(energyType)
+    const highlightedSource = energyTypeToHighlight.get(data.energyType)
     sourcesDiv.selectAll('button').classed('btn-highlight', false)
     sourcesDiv.selectAll('button').classed('btn-active', false)
     sourcesDiv
@@ -674,20 +646,10 @@ function control(chart) {
       // Does the matching energy source have the same source as the highlighted?
       .classed('btn-highlight', (d) => d.energyType === highlightedSource)
 
-    // Call the closure, updating the chart.
-    chart
-      .energyType(energyType)
-      .energyName(name)
-      .fontColor(color)
-      .colorScale(colorScale)
-      .legendTitle(title)()
+    update(chart, data)
   }
 
-  function updateSources(
-    selection,
-    { energyType, name, colorScale, title, color }
-  ) {
-    console.log(selection)
+  function updateSources(selection, data) {
     const button = d3.select(selection)
 
     typesDiv.selectAll('button').classed('btn-active', false)
@@ -697,18 +659,41 @@ function control(chart) {
       .classed('btn-highlight', false)
     button.classed('btn-active', true)
 
-    // Call the closure, updating the chart.
-    chart
-      .energyType(energyType)
-      .energyName(name)
-      .fontColor(color)
-      .colorScale(colorScale)
-      .legendTitle(title)()
+    update(chart, data)
   }
+}
 
-  // Initialize.sourcesDiv=
-  updateTypes(typesDiv.selectAll('button')._groups[0][0], energyTypes[0])
-  //updateSources(energySources[0])
+/*
+ * @param {object} options Two options:
+ * - isEnergyType: Determines the initially selected button's row. If this is true,
+ * then it will select from the top row, otherwhise the bottom one (where the
+ * energy sources are.) Defaults to true.
+ * - index: The index of the button. Defaults to 0.
+ */
+function startAt(chart, { isEnergyType = true, index = 0 }) {
+  // Get the related array (see energyTypes and energySources).
+  let data
+  if (isEnergyType) {
+    data = energyTypes
+  } else {
+    data = energySources
+  }
+  data = data.filter((d, i) => i === index)[0]
+  update(chart, data)
+}
+
+/**
+ * Updates the chart.
+ * @param {function} chart The closure.
+ * @param {object} param1 Configuration properties.
+ */
+function update(chart, { energyType, name, colorScale, title, color }) {
+  chart
+    .energyType(energyType)
+    .energyName(name)
+    .fontColor(color)
+    .colorScale(colorScale)
+    .legendTitle(title)()
 }
 
 // Load all the data before continuing.
@@ -718,11 +703,29 @@ Promise.all([
 ])
   .then((data) => transform(data))
   .then((data) => {
+    let selector, map
+
+    /*
+     * Example 1: Render full map with control.
+     * You need to include the HTML skeleton.
+     */
+    selector = '.energy-map'
     // Returns a closure. Renders when closure is called
-    const map = chart(data)
+    map = chart(data, selector)
     // Draw the control buttons.
     control(map)
+    // Start at the nuclear button.
+    startAt(map, { isEnergyType: true, index: 1 })
     // Initial render.
+    map()
+
+    /*
+     * Example 2: Render map only.
+     * You only need to include a single div.
+     */
+    selector = '.energy-map-2'
+    map = chart(data, selector)
+    startAt(map, { isEnergyType: false, index: 2 })
     map()
   })
   .catch((error) => {
