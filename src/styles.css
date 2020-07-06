@@ -3,6 +3,7 @@
 }
 body {
   font-family: Roboto, sans-serif;
+  padding: 0 0.5rem;
 }
 
 .container {
@@ -35,6 +36,15 @@ svg #circles circle:hover {
   right: 0;
   height: 50px;
   opacity: 80%;
+}
+@media (max-width: 600px) {
+  .control .logo {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 20px;
+    opacity: 80%;
+  }
 }
 .control-drawer {
   margin: 0.5rem;
