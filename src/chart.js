@@ -285,7 +285,7 @@ function chart(data) {
         `<span class="tooltip-name" style="color:${fontColor}">${energyName}</span>-powered plants account for <br>
         <span class="align">
         <span class="tooltip-value">${d.properties.energyTypes[energyType]}%</span>  
-          &nbsp;of energy in&nbsp;
+          of energy in
           <span class="tooltip-title">${d.properties.name}</span>.
         </span>
         </div>`

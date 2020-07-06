@@ -37,15 +37,6 @@ svg #circles circle:hover {
   height: 50px;
   opacity: 80%;
 }
-@media (max-width: 600px) {
-  .control .logo {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    height: 20px;
-    opacity: 80%;
-  }
-}
 .control-drawer {
   margin: 0.5rem;
   font-size: 0.75rem;
@@ -137,12 +128,29 @@ svg #circles circle:hover {
   font-size: 1rem;
   font-weight: bold;
 }
-.align {
-  display: flex;
-  align-items: bottom;
-}
 
+@media (max-width: 600px) {
+  .control .logo {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 20px;
+    opacity: 80%;
+  }
+  .tooltip-title {
+    font-weight: bold;
+  }
+  .tooltip-value {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  .tooltip-name {
+    font-weight: bold;
+  }
+}
+/* D3 tooltip layout */
 /* Tooltip */
+
 .d3-tip {
   line-height: 1;
   font-family: Roboto;
