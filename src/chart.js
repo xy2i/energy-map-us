@@ -1,6 +1,11 @@
-/* Configuration */
+/*
+ * Configuration
+ */
 const selector = '.energy-map' // Where to put the chart (CSS selector)
 
+/*
+ * Library functions
+ */
 function createCanvas(width, height) {
   var canvas = document.createElement('canvas')
   canvas.width = width
@@ -189,6 +194,10 @@ function legend({
 }
 
 /*
+ * Chart code begins here
+ */
+
+/*
  * data: bubble map data. See data/energy.csv for the schema.
  * geo: US map TopoJSON
  *
@@ -284,9 +293,9 @@ function chart(data) {
       (d, i) =>
         `<span class="tooltip-name" style="color:${fontColor}">${energyName}</span>-powered plants account for <br>
         <span class="align">
-        <span class="tooltip-value">${d.properties.energyTypes[energyType]}%</span>  
-          of energy in
-          <span class="tooltip-title">${d.properties.name}</span>.
+        <span class="tooltip-value">${d.properties.energyTypes[energyType]}%&nbsp;</span>  
+          of energy in&nbsp;
+          <span class="tooltip-title">${d.properties.name}.</span>
         </span>
         </div>`
     )
